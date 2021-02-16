@@ -15,10 +15,12 @@ public class Movement : MonoBehaviour
     [SerializeField] float rotationThrust = 100f;
     [SerializeField] AudioClip mainThrustSFX;
     //other audio clips are managed in collision handler
+    [SerializeField] ParticleSystem mainThrustParticles;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
+        mainThrustParticles.Stop();
     }
 
     // Update is called once per frame
@@ -37,11 +39,14 @@ public class Movement : MonoBehaviour
             if(!audioSource.isPlaying)
             {
                 audioSource.PlayOneShot(mainThrustSFX);
+                mainThrustParticles.Play();
             }
+            
         }
         else 
         {
             audioSource.Stop();
+            mainThrustParticles.Stop();
         }
     }
     

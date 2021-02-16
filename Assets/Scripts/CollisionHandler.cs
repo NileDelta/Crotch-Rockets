@@ -3,16 +3,20 @@ using UnityEngine.SceneManagement;
 public class CollisionHandler : MonoBehaviour
 {
     AudioSource audioSource;
+
     [SerializeField] float deathDelay = 1f;
     [SerializeField] float VictoryDelay = 1f;
     [SerializeField] AudioClip crashSFX;
     [SerializeField] AudioClip victorySFX;
-
+    [SerializeField] ParticleSystem crashParticles;
+    [SerializeField] ParticleSystem victoryParticles;
     bool isTransitioning = false;
 
     void Start() 
     {
         audioSource = GetComponent<AudioSource>();
+        crashParticles.Stop();
+        victoryParticles.Stop();        
     }
     void OnCollisionEnter(Collision other) 
     {
@@ -40,14 +44,14 @@ public class CollisionHandler : MonoBehaviour
     {
         isTransitioning = true;
         audioSource.PlayOneShot(victorySFX);
-        //todo add humping annimation upon landing
+        victoryParticles.Play();
         GetComponent<Movement>().enabled = false;
         Invoke("LoadNextLevel", VictoryDelay);
     }
     void runCrashSequence()
     {
         audioSource.PlayOneShot(crashSFX);
-        //todo add humping annimation upon crash
+        crashParticles.Play();
         GetComponent<Movement>().enabled = false;
         Invoke("ReloadLevel", deathDelay);
     }
