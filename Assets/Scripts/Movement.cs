@@ -2,16 +2,23 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    
+    // PARAMETERS - for tuning, typically set in the editor
+
+    //CACHE - e.g. references for readability or speed
+
+    //STATE - private instance (member) variables
+
+
     Rigidbody rb;
-    AudioSource thrustAudio;
+    AudioSource audioSource;
     [SerializeField] float mainThrust = 100f;
     [SerializeField] float rotationThrust = 100f;
-
+    [SerializeField] AudioClip mainThrustSFX;
+    //other audio clips are managed in collision handler
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        thrustAudio = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -26,10 +33,16 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            thrustAudio.mute = false;
             rb.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+            if(!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(mainThrustSFX);
+            }
         }
-        else thrustAudio.mute = true;
+        else 
+        {
+            audioSource.Stop();
+        }
     }
     
     void ProcessRotation()

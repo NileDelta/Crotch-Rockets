@@ -2,12 +2,22 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class CollisionHandler : MonoBehaviour
 {
+    AudioSource audioSource;
     [SerializeField] float deathDelay = 1f;
     [SerializeField] float VictoryDelay = 1f;
+    [SerializeField] AudioClip crashSFX;
+    [SerializeField] AudioClip victorySFX;
 
+    bool isTransitioning = false;
 
+    void Start() 
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
     void OnCollisionEnter(Collision other) 
     {
+        if (isTransitioning){return;}
+        
         switch(other.gameObject.tag)
         {
             case "Friendly":
@@ -20,7 +30,7 @@ public class CollisionHandler : MonoBehaviour
                 Debug.Log("Refueling...");
                 break;
             default: //if the player hits an untagged obstacle they will 'die' with a delay (default of 1) and will disable movement script
-                runDeathSequence();
+                runCrashSequence();
                 break;
 
         }
@@ -28,14 +38,15 @@ public class CollisionHandler : MonoBehaviour
 
     void runVictorySequence()
     {
-        //todo add SFX upon landing
+        isTransitioning = true;
+        audioSource.PlayOneShot(victorySFX);
         //todo add humping annimation upon landing
         GetComponent<Movement>().enabled = false;
         Invoke("LoadNextLevel", VictoryDelay);
     }
-    void runDeathSequence()
+    void runCrashSequence()
     {
-        //todo add SFX upon crash
+        audioSource.PlayOneShot(crashSFX);
         //todo add humping annimation upon crash
         GetComponent<Movement>().enabled = false;
         Invoke("ReloadLevel", deathDelay);
