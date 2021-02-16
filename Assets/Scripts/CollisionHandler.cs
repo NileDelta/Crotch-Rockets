@@ -11,6 +11,7 @@ public class CollisionHandler : MonoBehaviour
     [SerializeField] ParticleSystem crashParticles;
     [SerializeField] ParticleSystem victoryParticles;
     bool isTransitioning = false;
+    bool collisionDisabled = false;
 
     void Start() 
     {
@@ -18,10 +19,27 @@ public class CollisionHandler : MonoBehaviour
         crashParticles.Stop();
         victoryParticles.Stop();        
     }
+
+    void Update() 
+    {
+        RespondToDebugKeys();
+    }
+
+    void RespondToDebugKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            collisionDisabled = !collisionDisabled;
+        }
+    }
     void OnCollisionEnter(Collision other) 
     {
-        if (isTransitioning){return;}
         
+        if (isTransitioning || collisionDisabled){return;}
         switch(other.gameObject.tag)
         {
             case "Friendly":
